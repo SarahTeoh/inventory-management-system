@@ -7,6 +7,8 @@ black==24.4.2
 cattrs==23.2.3
 click==8.1.7
 constructs==10.3.0
+Faker==25.2.0
+faker-commerce==1.0.4
 importlib_resources==6.4.0
 iniconfig==2.0.0
 jsii==1.98.0
