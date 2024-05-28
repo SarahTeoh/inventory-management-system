@@ -19,40 +19,79 @@ class ApiLambdaStack(Stack):
         **kwargs,
     ) -> None:
         super().__init__(scope, construct_id, **kwargs)
-        lambdas = self.create_lambda_functions(dynamodb_table)
+        lambdas = self.create_lambda_functions(dynamodb_table=dynamodb_table)
         self.create_api_gw(lambdas=lambdas)
 
-    def create_api_gw(self, lambdas: list) -> None:
-        inventory_api = api_gatewayv2.HttpApi(self, "InventoryApi")
+    def add_route(
+        self,
+        api: api_gatewayv2.HttpApi,
+        path: str,
+        methods: list[api_gatewayv2.HttpMethod],
+        lambda_function: _lambda.Function,
+        integration_id: str,
+    ) -> None:
+        """Helper function to add a route to the API Gateway."""
+        integration = HttpLambdaIntegration(integration_id, lambda_function)
 
-        upsert_inventory_integration = HttpLambdaIntegration(
-            "UpsertInventoryIntegration", lambdas["upsert_inventory_fn"]
+        api.add_routes(
+            path=path,
+            methods=methods,
+            integration=integration,
         )
 
-        inventory_api.add_routes(
-            path="/inventories",
-            methods=[api_gatewayv2.HttpMethod.POST],
-            integration=upsert_inventory_integration,
+    def create_lambda_function_with_dynamodb_access(
+        self,
+        id: str,
+        function_name: str,
+        handler: str,
+        dynamodb_table: dynamodb.TableV2,
+        environment_vars: dict = None,
+        read_write_access: bool = False,
+    ) -> _lambda.Function:
+        """Helper function to create a Lambda function"""
+        fn = _lambda.Function(
+            self,
+            id,
+            function_name=function_name,
+            runtime=_lambda.Runtime.PYTHON_3_12,
+            code=_lambda.Code.from_asset("lambdas"),
+            handler=handler,
+            environment=environment_vars,
         )
+
+        if read_write_access:
+            dynamodb_table.grant_read_write_data(fn)
+        else:
+            dynamodb_table.grant_read_data(fn)
+
+        return fn
 
     def create_lambda_functions(
         self,
         dynamodb_table: dynamodb.TableV2,
     ) -> dict[str, _lambda.Function]:
-        # Backend Task 1: Upsert item
-        upsert_inventory_fn = _lambda.Function(
-            self,
-            "upsertInventoryFunction",
-            function_name="upsertInventoryFunction",
-            runtime=_lambda.Runtime.PYTHON_3_12,
-            code=_lambda.Code.from_asset("lambdas"),
-            handler="upsertInventoryFunction.handler",
-            environment={
-                "DB_TABLE_NAME": dynamodb_table.table_name,
-            },
+        """Create needed lambda functions for backend tasks"""
+        return {
+            # Backend Task 1
+            "upsert_inventory_fn": self.create_lambda_function_with_dynamodb_access(
+                id="upsertInventoryFunction",
+                function_name="upsertInventoryFunction",
+                handler="upsertInventoryFunction.handler",
+                dynamodb_table=dynamodb_table,
+                environment_vars={"DB_TABLE_NAME": dynamodb_table.table_name},
+                read_write_access=True,
+            )
+        }
+
+    def create_api_gw(self, lambdas: list) -> None:
+        """Create api routes"""
+        inventory_api = api_gatewayv2.HttpApi(self, "InventoryApi")
+
+        # Route for Backend Task 1: Upsert item
+        self.add_route(
+            api=inventory_api,
+            path="/inventories",
+            methods=[api_gatewayv2.HttpMethod.POST],
+            lambda_function=lambdas["upsert_inventory_fn"],
+            integration_id="upsertInventoryFunction",
         )
-
-        # grant Dynamodb table read and write permission to Lambda
-        dynamodb_table.grant_read_write_data(upsert_inventory_fn)
-
-        return {"upsert_inventory_fn": upsert_inventory_fn}
