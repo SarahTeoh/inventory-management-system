@@ -3,26 +3,18 @@ import os
 
 import aws_cdk as cdk
 
-from inventory_management_system.inventory_management_system_stack import InventoryManagementSystemStack
-
+from inventory_management_system.dynamodb_stack import DynamoDbStack
+from inventory_management_system.data_model.dynamodb_data_model import (
+    dynamodb_table_model,
+)
 
 app = cdk.App()
-InventoryManagementSystemStack(app, "InventoryManagementSystemStack",
-    # If you don't specify 'env', this stack will be environment-agnostic.
-    # Account/Region-dependent features and context lookups will not work,
-    # but a single synthesized template can be deployed anywhere.
-
-    # Uncomment the next line to specialize this stack for the AWS Account
-    # and Region that are implied by the current CLI configuration.
-
-    #env=cdk.Environment(account=os.getenv('CDK_DEFAULT_ACCOUNT'), region=os.getenv('CDK_DEFAULT_REGION')),
-
-    # Uncomment the next line if you know exactly what Account and Region you
-    # want to deploy the stack to. */
-
-    #env=cdk.Environment(account='123456789012', region='us-east-1'),
-
-    # For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html
-    )
-
+dynamo_db_stack = DynamoDbStack(
+    app,
+    "DynamoDbStack",
+    dynamodb_data_model=dynamodb_table_model,
+    env=cdk.Environment(
+        account=os.getenv("CDK_DEFAULT_ACCOUNT"), region=os.getenv("CDK_DEFAULT_REGION")
+    ),
+)
 app.synth()
