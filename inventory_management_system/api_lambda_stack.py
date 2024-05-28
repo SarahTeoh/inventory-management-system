@@ -80,7 +80,15 @@ class ApiLambdaStack(Stack):
                 dynamodb_table=dynamodb_table,
                 environment_vars={"DB_TABLE_NAME": dynamodb_table.table_name},
                 read_write_access=True,
-            )
+            ),
+            # Backend Task 2
+            "filter_inventory_by_date_range_fn": self.create_lambda_function_with_dynamodb_access(
+                id="filterInventoryByDateRangeFunction",
+                function_name="filterInventoryByDateRangeFunction",
+                handler="filterInventoryByDateRangeFunction.handler",
+                dynamodb_table=dynamodb_table,
+                environment_vars={"DB_TABLE_NAME": dynamodb_table.table_name},
+            ),
         }
 
     def create_api_gw(self, lambdas: list) -> None:
@@ -94,4 +102,13 @@ class ApiLambdaStack(Stack):
             methods=[api_gatewayv2.HttpMethod.POST],
             lambda_function=lambdas["upsert_inventory_fn"],
             integration_id="upsertInventoryFunction",
+        )
+
+        # Route for Backend Task 2: Filter item by date range
+        self.add_route(
+            api=inventory_api,
+            path="/inventories/filterByDateRange",
+            methods=[api_gatewayv2.HttpMethod.GET],
+            lambda_function=lambdas["filter_inventory_by_date_range_fn"],
+            integration_id="filterInventoryByDateRangeFunction",
         )

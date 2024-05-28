@@ -53,6 +53,15 @@ def test_lambda_functions_created(template):
         },
     )
 
+    # Assert that filterInventoryByDateRangeFunctionFunction created
+    template.has_resource_properties(
+        "AWS::Lambda::Function",
+        {
+            "Handler": "filterInventoryByDateRangeFunction.handler",
+            "Runtime": "python3.12",
+        },
+    )
+
 
 def test_api_created(template):
     # Assert that API created
@@ -65,4 +74,10 @@ def test_api_created(template):
     template.has_resource_properties(
         "AWS::ApiGatewayV2::Route",
         {"RouteKey": "POST /inventories"},
+    )
+
+    # Assert that filterByDateRange route and integration created
+    template.has_resource_properties(
+        "AWS::ApiGatewayV2::Route",
+        {"RouteKey": "GET /inventories/filterByDateRange"},
     )
