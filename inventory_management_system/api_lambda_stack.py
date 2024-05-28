@@ -6,6 +6,9 @@ from aws_cdk import (
 )
 from aws_cdk.aws_apigatewayv2_integrations import HttpLambdaIntegration
 from constructs import Construct
+from inventory_management_system.data_model.dynamodb_data_model import (
+    CategoryEnum,
+)
 
 
 class ApiLambdaStack(Stack):
@@ -89,6 +92,17 @@ class ApiLambdaStack(Stack):
                 dynamodb_table=dynamodb_table,
                 environment_vars={"DB_TABLE_NAME": dynamodb_table.table_name},
             ),
+            # Backend Task 3
+            "aggregate_inventory_fn": self.create_lambda_function_with_dynamodb_access(
+                id="AggregateInventoryFunction",
+                function_name="aggregateInventoryFunction",
+                handler="aggregateInventoryFunction.handler",
+                dynamodb_table=dynamodb_table,
+                environment_vars={
+                    "DB_TABLE_NAME": dynamodb_table.table_name,
+                    "CATEGORIES": str(CategoryEnum.list()),
+                },
+            ),
         }
 
     def create_api_gw(self, lambdas: list) -> None:
@@ -111,4 +125,13 @@ class ApiLambdaStack(Stack):
             methods=[api_gatewayv2.HttpMethod.GET],
             lambda_function=lambdas["filter_inventory_by_date_range_fn"],
             integration_id="filterInventoryByDateRangeFunction",
+        )
+
+        # Route for Backend Task 3: Aggregate item by category
+        self.add_route(
+            api=inventory_api,
+            path="/inventories/aggregate",
+            methods=[api_gatewayv2.HttpMethod.GET],
+            lambda_function=lambdas["aggregate_inventory_fn"],
+            integration_id="AggregateInventoryFunction",
         )

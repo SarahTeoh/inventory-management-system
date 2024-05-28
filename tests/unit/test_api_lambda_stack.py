@@ -62,6 +62,24 @@ def test_lambda_functions_created(template):
         },
     )
 
+    # Assert that aggregateInventoryFunction created
+    template.has_resource_properties(
+        "AWS::Lambda::Function",
+        {
+            "Handler": "aggregateInventoryFunction.handler",
+            "Runtime": "python3.12",
+        },
+    )
+
+    # Assert that aggregateInventoryFunction created
+    template.has_resource_properties(
+        "AWS::Lambda::Function",
+        {
+            "Handler": "aggregateInventoryFunction.handler",
+            "Runtime": "python3.12",
+        },
+    )
+
 
 def test_api_created(template):
     # Assert that API created
@@ -80,4 +98,16 @@ def test_api_created(template):
     template.has_resource_properties(
         "AWS::ApiGatewayV2::Route",
         {"RouteKey": "GET /inventories/filterByDateRange"},
+    )
+
+    # Assert that aggregate item by category route and integration created
+    template.has_resource_properties(
+        "AWS::ApiGatewayV2::Route",
+        {"RouteKey": "GET /inventories/aggregate"},
+    )
+
+    # Assert that aggregate item by category route and integration created
+    template.has_resource_properties(
+        "AWS::ApiGatewayV2::Route",
+        {"RouteKey": "GET /inventories/aggregate"},
     )
