@@ -103,6 +103,16 @@ class ApiLambdaStack(Stack):
                     "CATEGORIES": str(CategoryEnum.list()),
                 },
             ),
+            # Backend Task 4
+            "query_inventory_fn": self.create_lambda_function_with_dynamodb_access(
+                id="QueryInventoryFunction",
+                function_name="queryInventoryFunction",
+                handler="queryInventoryFunction.handler",
+                dynamodb_table=dynamodb_table,
+                environment_vars={
+                    "DB_TABLE_NAME": dynamodb_table.table_name,
+                },
+            ),
         }
 
     def create_api_gw(self, lambdas: list) -> None:
@@ -134,4 +144,13 @@ class ApiLambdaStack(Stack):
             methods=[api_gatewayv2.HttpMethod.GET],
             lambda_function=lambdas["aggregate_inventory_fn"],
             integration_id="AggregateInventoryFunction",
+        )
+
+        # Route for Backend Task 4: Handle Filters, Pagination and Sorting Options
+        self.add_route(
+            api=inventory_api,
+            path="/inventories",
+            methods=[api_gatewayv2.HttpMethod.GET],
+            lambda_function=lambdas["query_inventory_fn"],
+            integration_id="QueryInventoryFunction",
         )
