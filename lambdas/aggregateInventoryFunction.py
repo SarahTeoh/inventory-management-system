@@ -52,17 +52,17 @@ def get_inventory_of_category(table, category: str, target_index_name: str):
     )
     total_price = sum(item["price"] for item in response["Items"])
     return {
-        "category": category,
+        "category": category.capitalize(),
         "total_price": float(total_price),
         "count": len(response["Items"]),
     }
 
 
 def get_inventory_of_all_categories(table, target_index_name: str):
-    valid_categories = get_valid_categories()
+    categories = eval(os.environ.get("CATEGORIES"))
     category_data = [
         get_inventory_of_category(table, category, target_index_name)
-        for category in valid_categories
+        for category in categories
     ]
 
     return [data for data in category_data if data["count"] > 0]
