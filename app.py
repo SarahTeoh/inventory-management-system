@@ -6,6 +6,7 @@ from inventory_management_system.dynamodb_stack import DynamoDbStack
 from inventory_management_system.data_model.dynamodb_data_model import (
     dynamodb_table_model,
 )
+from inventory_management_system.frontend_stack import FrontendStack
 
 app = cdk.App()
 dynamo_db_stack = DynamoDbStack(
@@ -24,5 +25,13 @@ ApiLambdaStack(
         account=os.getenv("CDK_DEFAULT_ACCOUNT"), region=os.getenv("CDK_DEFAULT_REGION")
     ),
     dynamodb_table=dynamo_db_stack.inventory_table,
+)
+
+FrontendStack(
+    app,
+    "FrontendStack",
+    env=cdk.Environment(
+        account=os.getenv("CDK_DEFAULT_ACCOUNT"), region=os.getenv("CDK_DEFAULT_REGION")
+    ),
 )
 app.synth()
