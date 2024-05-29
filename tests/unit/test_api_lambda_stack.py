@@ -100,7 +100,7 @@ def test_api_created(template):
     # Assert that upsert route and integration created
     template.has_resource_properties(
         "AWS::ApiGatewayV2::Route",
-        {"RouteKey": "POST /inventories"},
+        {"RouteKey": "POST /inventory"},
     )
 
     # Assert that filterByDateRange route and integration created
@@ -115,14 +115,8 @@ def test_api_created(template):
         {"RouteKey": "GET /inventories/aggregate"},
     )
 
-    # Assert that aggregate item by category route and integration created
-    template.has_resource_properties(
-        "AWS::ApiGatewayV2::Route",
-        {"RouteKey": "GET /inventories/aggregate"},
-    )
-
     # Assert that query inventory integration created
     template.has_resource_properties(
         "AWS::ApiGatewayV2::Route",
-        {"RouteKey": "GET /inventories"},
+        {"RouteKey": "POST /inventories"},
     )

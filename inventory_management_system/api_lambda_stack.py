@@ -122,7 +122,7 @@ class ApiLambdaStack(Stack):
         # Route for Backend Task 1: Upsert item
         self.add_route(
             api=inventory_api,
-            path="/inventories",
+            path="/inventory",
             methods=[api_gatewayv2.HttpMethod.POST],
             lambda_function=lambdas["upsert_inventory_fn"],
             integration_id="upsertInventoryFunction",
@@ -150,7 +150,7 @@ class ApiLambdaStack(Stack):
         self.add_route(
             api=inventory_api,
             path="/inventories",
-            methods=[api_gatewayv2.HttpMethod.GET],
+            methods=[api_gatewayv2.HttpMethod.POST],
             lambda_function=lambdas["query_inventory_fn"],
             integration_id="QueryInventoryFunction",
         )
