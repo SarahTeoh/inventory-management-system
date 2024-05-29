@@ -84,9 +84,11 @@ def test_create_secondary_indexes():
         SecondaryIndex(
             index_name="CategoryPriceIndex",
             partition_key=create_db_attribute("category"),
-            sort_key=create_db_attribute(name="name"),
+            sort_key=create_db_attribute(
+                name="price", type=dynamodb.AttributeType.NUMBER
+            ),
             projection_type=dynamodb.ProjectionType.INCLUDE,
-            non_key_attributes=["id", "last_updated_dt", "price"],
+            non_key_attributes=["id", "last_updated_dt", "name"],
         ),
         SecondaryIndex(
             index_name="ItemsLastUpdatedDtIndex",

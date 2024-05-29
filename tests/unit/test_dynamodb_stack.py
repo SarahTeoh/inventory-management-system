@@ -83,11 +83,11 @@ def test_dynamodb_global_secondary_indexes(template):
                     "IndexName": "CategoryPriceIndex",
                     "KeySchema": [
                         {"AttributeName": "category", "KeyType": "HASH"},
-                        {"AttributeName": "name", "KeyType": "RANGE"},
+                        {"AttributeName": "price", "KeyType": "RANGE"},
                     ],
                     "Projection": {
                         "ProjectionType": "INCLUDE",
-                        "NonKeyAttributes": ["id", "last_updated_dt", "price"],
+                        "NonKeyAttributes": ["id", "last_updated_dt", "name"],
                     },
                 },
                 {

@@ -108,9 +108,9 @@ def create_secondary_indexes() -> list[SecondaryIndex]:
     category_price_index = SecondaryIndex(
         index_name="CategoryPriceIndex",
         partition_key=create_db_attribute("category"),
-        sort_key=create_db_attribute("name"),
+        sort_key=create_db_attribute(name="price", type=dynamodb.AttributeType.NUMBER),
         projection_type=dynamodb.ProjectionType.INCLUDE,
-        non_key_attributes=["id", "last_updated_dt", "price"],
+        non_key_attributes=["id", "last_updated_dt", "name"],
     )
     items_last_updated_dt_index = SecondaryIndex(
         index_name="ItemsLastUpdatedDtIndex",
