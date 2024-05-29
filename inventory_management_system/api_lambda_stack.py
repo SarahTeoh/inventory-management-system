@@ -117,7 +117,21 @@ class ApiLambdaStack(Stack):
 
     def create_api_gw(self, lambdas: list) -> None:
         """Create api routes"""
-        inventory_api = api_gatewayv2.HttpApi(self, "InventoryApi")
+        inventory_api = api_gatewayv2.HttpApi(
+            self,
+            "InventoryApi",
+            cors_preflight=api_gatewayv2.CorsPreflightOptions(
+                allow_headers=["Content-Type", "Authorization", "X-Api-Key"],
+                allow_methods=[
+                    api_gatewayv2.CorsHttpMethod.GET,
+                    api_gatewayv2.CorsHttpMethod.POST,
+                    api_gatewayv2.CorsHttpMethod.PUT,
+                    api_gatewayv2.CorsHttpMethod.HEAD,
+                    api_gatewayv2.CorsHttpMethod.OPTIONS,
+                ],
+                allow_origins=["*"],
+            ),
+        )
 
         # Route for Backend Task 1: Upsert item
         self.add_route(
