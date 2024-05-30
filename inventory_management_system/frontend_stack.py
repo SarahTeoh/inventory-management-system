@@ -19,10 +19,7 @@ class FrontendStack(Stack):
         **kwargs,
     ) -> None:
         super().__init__(scope, construct_id, **kwargs)
-        s3_bucket = self.create_s3_bucket()
-        self.create_cloudfront_distribution(s3_bucket)
 
-    def create_s3_bucket(self) -> s3.Bucket:
         bucket = s3.Bucket(
             self,
             "InventoryManagementSystemFrontendBucket",
@@ -32,13 +29,17 @@ class FrontendStack(Stack):
             auto_delete_objects=True,
         )
 
+        distribution = self.create_cloudfront_distribution(bucket)
+
+        #  Deploy with cache invalidation
         bucket_deployment.BucketDeployment(
             self,
             "InventoryManagementSystemFrontendBucketDeployment",
             destination_bucket=bucket,
             sources=[bucket_deployment.Source.asset("./frontend-react/dist")],
+            distribution=distribution,
+            distribution_paths=["/*"],
         )
-        return bucket
 
     def create_cloudfront_distribution(self, s3_bucket: s3.Bucket) -> None:
         frontend_cloudfront_oac = cloudfront.OriginAccessIdentity(
@@ -46,7 +47,7 @@ class FrontendStack(Stack):
         )
         s3_bucket.grant_read(frontend_cloudfront_oac)
 
-        cloudfront.Distribution(
+        return cloudfront.Distribution(
             self,
             "InventoryManagementSystemFrontendDistribution",
             default_behavior=cloudfront.BehaviorOptions(
