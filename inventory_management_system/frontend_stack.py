@@ -20,6 +20,7 @@ class FrontendStack(Stack):
     ) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
+        # s3 bucket that hosts frontend
         bucket = s3.Bucket(
             self,
             "InventoryManagementSystemFrontendBucket",
@@ -29,6 +30,7 @@ class FrontendStack(Stack):
             auto_delete_objects=True,
         )
 
+        # create cloudfront distribution
         distribution = self.create_cloudfront_distribution(bucket)
 
         #  Deploy with cache invalidation
@@ -42,11 +44,13 @@ class FrontendStack(Stack):
         )
 
     def create_cloudfront_distribution(self, s3_bucket: s3.Bucket) -> None:
+        # cloudfront user to access s3 bucket origin
         frontend_cloudfront_oac = cloudfront.OriginAccessIdentity(
             self, "FrontendCloudfrontOriginAccessIdentity"
         )
         s3_bucket.grant_read(frontend_cloudfront_oac)
 
+        # returns cloudfront distribution of the react app
         return cloudfront.Distribution(
             self,
             "InventoryManagementSystemFrontendDistribution",
