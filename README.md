@@ -1,17 +1,17 @@
 ****
-## Inventory Management System
+# Inventory Management System
 This is a serverless inventory management system created with AWS services. You can access the system [here](https://d2ngzfpqeh77qd.cloudfront.net/.)
 
-### Environment setup
+## Environment setup
 
-#### Requirements
+### Requirements
 You need these on your computer before you can proceed with the setup.
 * pip 
 * git 
 * Python >= 3.8 
 * aws-cdk
 
-#### To Run locally
+### To Run locally
 1. Clone this repository
 ```
 $ git clone https://github.com/SarahTeoh/inventory-management-system.git 
@@ -51,7 +51,7 @@ $ cdk synth
 $ cdk deploy
 ```
 
-#### To Test locally
+### To Test locally
 ```
 $ python3 -m pytest 
 ```
@@ -64,7 +64,7 @@ $ python3 -m pytest
 | /inventories/aggregate         | GET         | aggregateInventoryFunction         | Filter items by category and total price. If `all` is passed, it will return all category.                                                                                        |
 | /inventories                   | POST        | queryInventoryFunction             | Query items with filters, pagination and sorting options.  
 
-### Architecture
+## Architecture
 the cloud infrastructure resources are defined and provisioned using AWS Cloud Development Kit (CDK). This is the architecture used.
 ![Architecture diagram](docs/architecture.drawio.png "Architecture")
 AWS Services used and their functions are listed below.
@@ -76,10 +76,7 @@ AWS Services used and their functions are listed below.
 | Lambda         | Process requests                                                                         |
 | DynamoDB       | Store data                                                                               |
 
-### Data model
-Access patterns
-
-
+## Data model
 The DynamoDB data model looks like this. The detailed diagram can be accessed under [`docs` directory here](docs).
 |                         | Type                   | Partition Key | Sort Key        |
 |-------------------------|------------------------|---------------|-----------------|
