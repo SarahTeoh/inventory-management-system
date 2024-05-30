@@ -1,5 +1,3 @@
-import { ColumnDef } from "@tanstack/react-table"
-
 export enum CategoryEnum {
     ALL = "All",
     MUSIC = "Music",
@@ -18,6 +16,10 @@ export type PostItemParams = {
     category: CategoryEnumValues;
     price: number;
 }
+export type DeleteItemParams = {
+    name: string;
+    category: CategoryEnumValues;
+}
 
 export type Inventory = {
     id: string
@@ -32,17 +34,3 @@ export type InventoryTableData = {
     price: number
 }
 
-export const columns: ColumnDef<InventoryTableData>[] = [
-    {
-        accessorKey: "name",
-        header: "Name",
-    },
-    {
-        accessorKey: "category",
-        header: "Category",
-    },
-    {
-        accessorKey: "price",
-        header: "Price",
-    },
-]

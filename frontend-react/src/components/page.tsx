@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
-import { PostItemParams, columns } from "./types"
+import { DeleteItemParams, InventoryTableData, PostItemParams } from "./types"
 import { DataTable } from "./data-table"
 import axios from "axios";
 import { Toaster } from "./ui/toaster";
 import { toast } from "./ui/use-toast";
+import { ColumnDef } from "@tanstack/react-table";
+import { ConfirmDeleteDialog } from "./confirm-delete-dialog";
 
 export default function MainPage() {
     const [inventories, setInventories] = useState([]);
@@ -38,10 +40,10 @@ export default function MainPage() {
         axios.post(`https://fs2hjjfa0d.execute-api.ap-southeast-1.amazonaws.com/inventory`, data)
             .then(() => {
                 toast({
-                    description: "Item was created/ updated successfully",
+                    description: "Item was created/updated successfully",
                     duration: 3000
                 })
-                fetchData(data);
+                fetchData();
             }).catch(err => {
                 console.log(err);
                 toast({
@@ -51,6 +53,47 @@ export default function MainPage() {
                 })
             })
     }
+
+    function deleteItem(data: DeleteItemParams): void {
+        axios.post(`https://fs2hjjfa0d.execute-api.ap-southeast-1.amazonaws.com/inventory/delete`, data)
+            .then(() => {
+                toast({
+                    description: "Item was deleted successfully!",
+                    duration: 3000
+                })
+                fetchData();
+            }).catch(err => {
+                console.log(err);
+                toast({
+                    title: "Something went wrong",
+                    description: err,
+                    duration: 3000
+                })
+            })
+    }
+
+    const columns: ColumnDef<InventoryTableData>[] = [
+        {
+            accessorKey: "name",
+            header: "Name",
+        },
+        {
+            accessorKey: "category",
+            header: "Category",
+        },
+        {
+            accessorKey: "price",
+            header: "Price",
+        },
+        {
+            accessorKey: "Delete",
+            cell: ({ row }) => {
+                return (
+                    <ConfirmDeleteDialog name={row.original.name} category={row.original.category} deleteItem={deleteItem} />
+                )
+            }
+        },
+    ]
 
     useEffect(() => {
         fetchData()
