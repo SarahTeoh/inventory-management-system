@@ -4,8 +4,10 @@ import uuid
 from decimal import Decimal
 import pytest
 from moto import mock_aws
+from unittest.mock import patch
 import boto3
 
+from lambdas.aggregateInventoryFunction import get_valid_categories
 from inventory_management_system.data_model.dynamodb_data_model import (
     CategoryEnum,
 )
@@ -167,6 +169,58 @@ def test_handler_aggregate_by_one_category(
     assert len(response_items) == 1
     assert response_items[0]["category"] == "Music"
     assert response_items[0]["total_price"] == 100.0
+
+
+def test_handler_invalid_category_parameter():
+    event = {"queryStringParameters": {"category": "invalid"}}
+
+    response = handler(event, None)
+
+    assert response["statusCode"] == 400
+    body = json.loads(response["body"])
+    assert body["error"] == "Missing or invalid category"
+
+
+def test_handler_missing_category_parameter():
+    event = {"queryStringParameters": {}}
+
+    response = handler(event, None)
+
+    assert response["statusCode"] == 400
+    body = json.loads(response["body"])
+    assert body["error"] == "Missing or invalid category"
+
+
+@patch.dict(os.environ, {"CATEGORIES": '["Electronics", "Books"]'})
+def test_valid_categories(target_items, other_items):
+    """
+    Test that the function returns the expected list when CATEGORIES env var is set.
+    """
+    expected_categories = (
+        ["Electronics", "Books"]
+        + ["electronics", "books"]
+        + ["All", "ALL", "AlL", "ALl", "alL", "aLl", "all"]
+    )
+    actual_categories = get_valid_categories()
+    assert actual_categories, expected_categories
+
+
+def test_handler_empty_category(environment_variable, target_items, other_items):
+    event = {
+        "queryStringParameters": {
+            "category": "Clothing",
+        }
+    }
+
+    response = handler(event, None)
+
+    body = json.loads(response["body"])
+    response_items = body["items"]
+
+    # Verify item was correctly filtered
+    assert len(response_items) == 1
+    assert response_items[0]["category"] == "Clothing"
+    assert response_items[0]["total_price"] == 0
 
 
 def test_handler_invalid_category_parameter():
