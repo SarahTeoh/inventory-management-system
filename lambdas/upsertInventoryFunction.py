@@ -14,12 +14,36 @@ dynamodb = boto3.resource("dynamodb")
 
 
 def handler(event, _):
+    """Handles HTTP POST requests to upsert an inventory item.
+
+    This Lambda function processes incoming HTTP POST requests containing a JSON payload
+    with details for an inventory item. It will update an existing item's price with the same name and category
+    or a new item is created if none exists.
+
+    Args:
+        event (dict): The HTTP event containing the request data.
+            - body (str): The JSON payload containing the inventory item details:
+                - name (str): The name of the item (required).
+                - category (str): The category of the item (required).
+                - price (decimal): The price of the item (required in int/ decimal format).
+
+        _: The Lambda context object (not used in this function).
+
+    Returns:
+        A dictionary containing the response data:
+            - On success:
+                - body (str): A JSON string containing the ID of the updated/inserted item.
+            - On error:
+                - statusCode (int): The HTTP status code.
+                - body (str): A JSON string containing the error message.
+    """
     table = dynamodb.Table(os.environ.get("DB_TABLE_NAME"))
     logging.info(f"## Loaded table: {table.name}")
     try:
         item = json.loads(event["body"])
         logging.info(f"## Received payload: {item}")
 
+        # Check existence of required fields
         required_fields = {"name", "category", "price"}
         missing_fields = required_fields - set(item.keys())
         if missing_fields:
@@ -29,6 +53,7 @@ def handler(event, _):
                 "body": json.dumps({"error": error_message}),
             }
 
+        # Update or Create with dynamodb update_item()
         now = datetime.now()
         response = table.update_item(
             Key={"name": item["name"], "category": item["category"]},

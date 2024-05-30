@@ -14,7 +14,19 @@ dynamodb = boto3.resource("dynamodb")
 
 
 def wait_for_index_active(table, index_name: str):
-    """Wait for the specified global secondary index to become ACTIVE."""
+    """Waits until the specified global secondary index(GSI) to become ACTIVE.
+
+    This function continuously checks the status of the specific GSI
+    of a DynamoDB table until it becomes active. It logs a message every 5 seconds
+    indicating that it's waiting for the index to backfill.
+
+    Args:
+        table: The DynamoDB table object.
+        index_name: The name of the GSI to wait for.
+
+    Raises:
+        RuntimeError: If the index does not become active within a reasonable time.
+    """
 
     def is_index_active(indexes, index_name):
         for index in indexes:
