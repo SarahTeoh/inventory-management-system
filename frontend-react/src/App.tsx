@@ -4,7 +4,6 @@ import MainPage from './components/page'
 function App() {
   return (
     <>
-      {/* @ts-expect-error Server Component */}
       <MainPage />
     </>
   )
