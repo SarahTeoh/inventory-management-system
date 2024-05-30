@@ -113,6 +113,17 @@ class ApiLambdaStack(Stack):
                     "DB_TABLE_NAME": dynamodb_table.table_name,
                 },
             ),
+            # Extra: Function to delete inventory item
+            "delete_inventory_fn": self.create_lambda_function_with_dynamodb_access(
+                id="DeleteInventoryFunction",
+                function_name="deleteInventoryFunction",
+                handler="deleteInventoryFunction.handler",
+                dynamodb_table=dynamodb_table,
+                environment_vars={
+                    "DB_TABLE_NAME": dynamodb_table.table_name,
+                },
+                read_write_access=True,
+            ),
         }
 
     def create_api_gw(self, lambdas: list) -> None:
@@ -167,4 +178,13 @@ class ApiLambdaStack(Stack):
             methods=[api_gatewayv2.HttpMethod.POST],
             lambda_function=lambdas["query_inventory_fn"],
             integration_id="QueryInventoryFunction",
+        )
+
+        # Route for Item Deletion: Handle Deletion of Item
+        self.add_route(
+            api=inventory_api,
+            path="/inventory/delete",
+            methods=[api_gatewayv2.HttpMethod.POST],
+            lambda_function=lambdas["delete_inventory_fn"],
+            integration_id="DeleteInventoryFunction",
         )
