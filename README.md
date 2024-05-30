@@ -84,3 +84,9 @@ The DynamoDB data model looks like this. The detailed diagram can be accessed un
 | CategoryPriceIndex      | Global Secondary Index | category      | price           |
 | ItemsLastUpdatedDtIndex | Global Secondary Index | static_pk     | last_updated_dt |
 | ItemsPriceIndex         | Global Secondary Index | static_pk     | price           |
+Please note that the static_pk value is a constant "PRODUCT". This is because DynamoDB is schemaless,
+so in order to retrieve a record we need to provide the partition key(exact match).
+We will have to scan the dynamodb table if we don't have a partition key.
+This might consume a big amount of Read Capacity Unit(RCU).
+So I made up a constant value here as partition key to save cost. 
+This is to save cost, but if the amount of data is big, we shall plan to use other design methods like partition sharding instead. 
