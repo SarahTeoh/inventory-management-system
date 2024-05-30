@@ -11,9 +11,8 @@ export default function MainPage() {
 
     function onCategoryChange(newValue: string) {
         setCurrentCategory(newValue)
-        fetchData({
-            "filters": { "category": newValue }
-        });
+        const requestParams = newValue.toLowerCase() === "all" ? {} : { filters: { category: newValue } };
+        fetchData(requestParams);
     }
 
     function fetchData(params = {}): void {

@@ -1,6 +1,7 @@
 import { ColumnDef } from "@tanstack/react-table"
 
 export enum CategoryEnum {
+    ALL = "All",
     MUSIC = "Music",
     GROCERY = "Grocery",
     CLOTHING = "Clothing",
@@ -21,13 +22,13 @@ export type PostItemParams = {
 export type Inventory = {
     id: string
     name: string
-    category: "Music" | "Grocery" | "Clothing" | "Home" | "Books" | "Outdoors" | "Electrics" | "Beauty"
+    category: CategoryEnumValues
     price: number
 }
 
 export type InventoryTableData = {
     name: string
-    category: "Music" | "Grocery" | "Clothing" | "Home" | "Books" | "Outdoors" | "Electrics" | "Beauty"
+    category: CategoryEnumValues
     price: number
 }
 
