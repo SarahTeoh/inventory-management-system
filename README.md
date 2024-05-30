@@ -1,58 +1,89 @@
+****
+## Inventory Management System
+This is a serverless inventory management system created with AWS services. You can access the system [here](https://d2ngzfpqeh77qd.cloudfront.net/.)
 
-# Welcome to your CDK Python project!
+### Environment setup
 
-This is a blank project for CDK development with Python.
+#### Requirements
+You need these on your computer before you can proceed with the setup.
+* pip 
+* git 
+* Python >= 3.8 
+* aws-cdk
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+#### To Run locally
+1. Clone this repository
+```
+$ git clone https://github.com/SarahTeoh/inventory-management-system.git 
+```
 
-This project is set up like a standard Python project.  The initialization
-process also creates a virtualenv within this project, stored under the `.venv`
-directory.  To create the virtualenv it assumes that there is a `python3`
-(or `python` for Windows) executable in your path with access to the `venv`
-package. If for any reason the automatic creation of the virtualenv fails,
-you can create the virtualenv manually.
+2. Ensure CDK is installed
+```
+$ npm install -g aws-cdk
+```
 
-To manually create a virtualenv on MacOS and Linux:
+3. Create a python virtual environment:
 
 ```
 $ python3 -m venv .venv
 ```
 
-After the init process completes and the virtualenv is created, you can use the following
-step to activate your virtualenv.
-
+4. Activate the virtual environmetn
+On MacOS or Linux
 ```
 $ source .venv/bin/activate
 ```
 
-If you are a Windows platform, you would activate the virtualenv like this:
+On Windows
 
 ```
 % .venv\Scripts\activate.bat
 ```
 
-Once the virtualenv is activated, you can install the required dependencies.
-
+5. Install required dependencies
 ```
 $ pip install -r requirements.txt
 ```
 
-At this point you can now synthesize the CloudFormation template for this code.
-
+6. Synthesize (cdk synth) or deploy (cdk deploy) the template
 ```
 $ cdk synth
+$ cdk deploy
 ```
 
-To add additional dependencies, for example other CDK libraries, just add
-them to your `setup.py` file and rerun the `pip install -r requirements.txt`
-command.
+#### To Test locally
+```
+$ python3 -m pytest 
+```
 
-## Useful commands
+### API endpoints
+|                                | Http Method | Integrated Lambda                  | Function                                                                                                                                                                          |
+|--------------------------------|-------------|------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| /inventory                     | POST        | upsertInventoryFunction            | Upsert item. If item with same name and same category doesn't exist, new item is created. If an item with same name and category exists, the item will be updated with new price. |
+| /inventories/filterByDateRange | GET         | filterInventoryByDateRangeFunction | Filter items that have `last_updated_dt` within the date range and return total price of the items.                                                                               |
+| /inventories/aggregate         | GET         | aggregateInventoryFunction         | Filter items by category and total price. If `all` is passed, it will return all category.                                                                                        |
+| /inventories                   | POST        | queryInventoryFunction             | Query items with filters, pagination and sorting options.  
 
- * `cdk ls`          list all stacks in the app
- * `cdk synth`       emits the synthesized CloudFormation template
- * `cdk deploy`      deploy this stack to your default AWS account/region
- * `cdk diff`        compare deployed stack with current state
- * `cdk docs`        open CDK documentation
+### Architecture
+the cloud infrastructure resources are defined and provisioned using AWS Cloud Development Kit (CDK). This is the architecture used.
+![Architecture diagram](docs/architecture.drawio.png "Architecture")
+AWS Services used and their functions are listed below.
+| Amazon Service | Function                                                                                 |
+|----------------|------------------------------------------------------------------------------------------|
+| API Gateway    | Receive requests and return response                                                     |
+| S3             | Host frontend created with React                                                         |
+| CloudFront     | Fast content delivery network, acts as distributed cache of frontend hosted in S3 bucket |
+| Lambda         | Process requests                                                                         |
+| DynamoDB       | Store data                                                                               |
 
-Enjoy!
+### Data model
+Access patterns
+
+
+The DynamoDB data model looks like this. The detailed diagram can be accessed under [`docs` directory here](docs).
+|                         | Type                   | Partition Key | Sort Key        |
+|-------------------------|------------------------|---------------|-----------------|
+| Inventory Table         | Base Table             | name          | category        |
+| CategoryPriceIndex      | Global Secondary Index | category      | price           |
+| ItemsLastUpdatedDtIndex | Global Secondary Index | static_pk     | last_updated_dt |
+| ItemsPriceIndex         | Global Secondary Index | static_pk     | price           |
