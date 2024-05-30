@@ -81,7 +81,7 @@ def build_dynamodb_query_params(
         # If no filters are given, return all items paginated, and sorted by last_updated_dt by default
         params["IndexName"] = "ItemsLastUpdatedDtIndex"
         key_condition = Key("static_pk").eq("PRODUCT")
-        if sort and sort["field"] == "price" and sort["order"] == "desc":
+        if sort and sort["field"] == "last_updated_dt" and sort["order"] == "desc":
             params["ScanIndexForward"] = False
 
     params["KeyConditionExpression"] = key_condition

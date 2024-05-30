@@ -28,8 +28,7 @@ export function ConfirmDeleteDialog({ name, category, deleteItem }: { name: stri
                 <AlertDialogHeader>
                     <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                     <AlertDialogDescription>
-                        This action cannot be undone. This will permanently delete {name}
-                        of {category} Category.
+                        This action cannot be undone. This will permanently delete {name} of {category} Category.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
