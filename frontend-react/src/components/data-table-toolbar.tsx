@@ -77,12 +77,14 @@ export function DataTableToolbar<TData>({
 }: DataTableToolbarProps<TData>) {
     const categories = Object.values(CategoryEnum);
     return (
-        <div className="flex items-center justify-between">
-            <div className="flex flex-1 items-center space-x-2">
+        <div className="sm:flex sm:items-center flex-wrap">
+            <div className="sm:flex sm:flex-1 sm:items-center sm:space-x-2 sm:space-y-0 my-2 flex-wrap space-y-2">
                 <TextInputProps table={table} />
                 <SelectCategory categories={categories} currentCategory={currentCategory} onCategoryChange={onCategoryChange} />
             </div>
-            <AddItemModal categories={categories} postItem={postItem} />
+            <div className="flex">
+                <AddItemModal categories={categories} postItem={postItem} />
+            </div>
         </div>
     )
 }
