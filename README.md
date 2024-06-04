@@ -58,12 +58,96 @@ $ python3 -m pytest
 
 ### API endpoints
 Base path: https://fs2hjjfa0d.execute-api.ap-southeast-1.amazonaws.com 
-|                                                                                                                                 | Http Method | Integrated Lambda                  | Function                                                                                                                                                                          | Example Parameters                                                                                                                                                                                                                                                                   |
-|---------------------------------------------------------------------------------------------------------------------------------|-------------|------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| [ /inventory ]( https://fs2hjjfa0d.execute-api.ap-southeast-1.amazonaws.com/inventory )                                         | POST        | upsertInventoryFunction            | Upsert item. If item with same name and same category doesn't exist, new item is created. If an item with same name and category exists, the item will be updated with new price. | <pre lang="json">{<br> &nbsp;"name": "Thing",<br> &nbsp;"category": "Stationary",<br> &nbsp;"price": 7.6 <br>}</pre>                                                                                                                                                                                                        |
-| [ /inventories/filterByDateRange ]( https://fs2hjjfa0d.execute-api.ap-southeast-1.amazonaws.com/inventories/filterByDateRange ) | GET         | filterInventoryByDateRangeFunction | Filter items that have `last_updated_dt` within the date range and return total price of the items.                                                                               | <pre lang="json">{<br> &nbsp;"dt_from": "2022-01-01 10:00:00",<br> &nbsp;"dt_to": "2022-01-25 10:00:00" <br>}</pre>                                                                                                                   |
-| [ /inventories/aggregate ]( https://fs2hjjfa0d.execute-api.ap-southeast-1.amazonaws.com/inventories/aggregate )                 | GET         | aggregateInventoryFunction         | Filter items by category and total price. If `all` is passed, it will return all category.                                                                                        |  <pre lang="json">{<br> &nbsp;"category": "all" <br>}</pre>                                                                                                                                                                                 |
-| [ /inventories ]( https://fs2hjjfa0d.execute-api.ap-southeast-1.amazonaws.com/inventories )                                     | POST        | queryInventoryFunction             | Query items with filters, pagination and sorting options.                                                                                                                         | <pre lang="json">{<br> &nbsp;"filters":<br> &nbsp; &nbsp;{<br> &nbsp; &nbsp; &nbsp;"name": "note",<br> &nbsp; &nbsp; &nbsp;"category": "Stationary",<br> &nbsp; &nbsp; &nbsp;"price_range": [1,10]<br> &nbsp; &nbsp;},<br> &nbsp; "pagination":<br> &nbsp; &nbsp;{<br> &nbsp; &nbsp; &nbsp;"page": 1,<br> &nbsp; &nbsp; &nbsp;"limit": 10 <br> &nbsp; &nbsp;}, &nbsp; &nbsp; &nbsp; <br> &nbsp; "sort":<br> &nbsp; &nbsp;{<br> &nbsp; &nbsp; &nbsp;"field": "price",<br> &nbsp; &nbsp; &nbsp;"order": "asc" <br> &nbsp; &nbsp;}<br>}</pre>             |
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Http Method</th>
+<th>Integrated Lambda</th>
+<th>Function</th>
+<th>Example Parameters</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="https://fs2hjjfa0d.execute-api.ap-southeast-1.amazonaws.com/inventory"> /inventory </a></td>
+<td>POST</td>
+<td>upsertInventoryFunction</td>
+<td>Upsert item. If item with same name and same category doesn&#39;t exist, new item is created. If an item with same name and category exists, the item will be updated with new price.</td>
+<td>
+
+```json
+{
+  "name": "Thing",
+  "category": "Stationary",
+  "price": 7.6
+}
+```
+
+</td>
+</tr>
+<tr>
+<td><a href="https://fs2hjjfa0d.execute-api.ap-southeast-1.amazonaws.com/inventories/filterByDateRange"> /inventories/filterByDateRange </a></td>
+<td>GET</td>
+<td>filterInventoryByDateRangeFunction</td>
+<td>Filter items that have <code>last_updated_dt</code> within the date range and return total price of the items.</td>
+<td>
+
+```json
+{
+  "dt_from": "2022-01-01 10:00:00",
+  "dt_to": "2022-01-25 10:00:00"
+}
+```
+
+</td>
+</tr>
+<tr>
+<td><a href="https://fs2hjjfa0d.execute-api.ap-southeast-1.amazonaws.com/inventories/aggregate"> /inventories/aggregate </a></td>
+<td>GET</td>
+<td>aggregateInventoryFunction</td>
+<td>Filter items by category and total price. If <code>all</code> is passed, it will return all category.</td>
+<td>
+
+```json
+{
+  "category": "all"
+}
+```
+
+</td>
+</tr>
+<tr>
+<td><a href="https://fs2hjjfa0d.execute-api.ap-southeast-1.amazonaws.com/inventories"> /inventories </a></td>
+<td>POST</td>
+<td>queryInventoryFunction</td>
+<td>Query items with filters, pagination and sorting options.</td>
+<td>
+
+```json
+{
+  "filters":
+    {
+      "name": "note"
+      "category": "Stationary",
+      "price_range": [1,10]
+    },
+  "pagination":
+    {
+      "page": 1,
+      "limit": 10
+    },
+  "sort":
+    {
+      "field": "price",
+      "order": "asc"
+    }
+}
+```
+
+</td>
+</tr>
+</tbody></table>
+
 
 [<img src="https://run.pstmn.io/button.svg" alt="Run In Postman" style="width: 128px; height: 32px;">](https://app.getpostman.com/run-collection/9636334-96c9786e-d1ba-4984-aa57-e950c20680b9?action=collection%2Ffork&source=rip_markdown&collection-url=entityId%3D9636334-96c9786e-d1ba-4984-aa57-e950c20680b9%26entityType%3Dcollection%26workspaceId%3Ded06f64f-fc04-427f-977f-4f3abacdbff7)
 
