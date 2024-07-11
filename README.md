@@ -1,6 +1,8 @@
 ****
 # Inventory Management System
-This is a serverless inventory management system created with AWS services. You can access the system [here](https://d2ngzfpqeh77qd.cloudfront.net/.)
+This is a serverless inventory management system created with AWS services. 
+NOTE: The system is temporarily unavailable to save costs on cloud resources usage.
+Please contact me if you wish to see the system in production.
 
 ## Environment setup
 
@@ -57,7 +59,7 @@ $ python3 -m pytest
 ```
 
 ### API endpoints
-Base path: https://fs2hjjfa0d.execute-api.ap-southeast-1.amazonaws.com 
+(Temporarily unavailable)Base path: https://fs2hjjfa0d.execute-api.ap-southeast-1.amazonaws.com 
 <table>
 <thead>
 <tr>
